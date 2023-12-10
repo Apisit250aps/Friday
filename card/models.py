@@ -1,10 +1,11 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 
 # Create your models here.
 
 
 ACTIVES = (
+    # robinson
     (1, "health + 1"),
     (2, "health + 2"),
     (3, "card + 1"),
@@ -17,6 +18,24 @@ ACTIVES = (
     (10, "swap 1"),
     (11, "swaps 2"),
     (12, "under"),
+    # ages
+    (-1, "max = 0"),
+    (-2, "health - 1"),
+    (-3, "health - 2"),
+    (-4, "stop"),
+)
+
+ACTIVES_BOSS = (
+    (1, "health + 1"),
+    (2, "health + 2"),
+    (3, "card + 1"),
+    (4, "card + 2"),
+    (5, "destroy"),
+    (6, "double"),
+    (7, "copy"),
+    (8, "phase"),
+    (9, "sort"),
+    (10, "swap 1"),
 )
 
 ABILITY_TYPE = ((1, "Normal"), (2, "Age"), (3, "Skill"))
@@ -28,7 +47,7 @@ LEVEL_CHOICES = (
 )
 
 
-class Abilities(models.Model):
+class Robinson(models.Model):
     name = models.CharField(max_length=255)
     power = models.IntegerField()
     active = models.IntegerField(choices=ACTIVES)
@@ -45,6 +64,8 @@ class Dangerous(models.Model):
 class Boss(models.Model):
     name = models.CharField(max_length=255)
     pick = models.IntegerField()
+    life_point = models.IntegerField()
+    active = models.IntegerField(choices=ACTIVES_BOSS)
 
     class Meta:
         verbose_name = "Boss"
@@ -60,13 +81,91 @@ class Boss(models.Model):
 class Game(models.Model):
     life_point = models.IntegerField(default=20)
     level = models.IntegerField(choices=LEVEL_CHOICES, default=1)
+    age = models.IntegerField(default=0)
+    draw = models.IntegerField(default=0)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    status = models.BooleanField(default=False)
+    start = models.DateTimeField(auto_now_add=True)
+    end = models.DateTimeField(auto_now=True)
+    score = models.IntegerField(default=0)
+    round = models.IntegerField(default=0)
+    
+
+
+class deckRobinson(models.Model):
+    card = models.ForeignKey(Robinson, on_delete=models.CASCADE)
+    value = models.IntegerField()
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name = "game"
-        verbose_name_plural = "games"
+        verbose_name = "Deck"
+        verbose_name_plural = "Decks"
 
     def __str__(self):
-        return self.name
+        return self.card
 
     def get_absolute_url(self):
-        return reversed("game_detail", kwargs={"pk": self.pk})
+        return reversed("Deck_detail", kwargs={"pk": self.pk})
+
+
+class graveRobinson(models.Model):
+    card = models.ForeignKey(Robinson, on_delete=models.CASCADE)
+    value = models.IntegerField()
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = "graveRobinson"
+        verbose_name_plural = "graveRobinson"
+
+    def __str__(self):
+        return self.card
+
+    def get_absolute_url(self):
+        return reversed("graveRobinson_detail", kwargs={"pk": self.pk})
+
+
+class deckDangerous(models.Model):
+    card = models.ForeignKey(Dangerous, on_delete=models.CASCADE)
+    value = models.IntegerField()
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = "deckDangerous"
+        verbose_name_plural = "deckDangerous"
+
+    def __str__(self):
+        return self.card
+
+    def get_absolute_url(self):
+        return reversed("deckDangerous_detail", kwargs={"pk": self.pk})
+
+
+class graveDangerous(models.Model):
+    card = models.ForeignKey(Dangerous, on_delete=models.CASCADE)
+    value = models.IntegerField()
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = "graveDangerous"
+        verbose_name_plural = "graveDangerous"
+
+    def __str__(self):
+        return self.card
+
+    def get_absolute_url(self):
+        return reversed("graveDangerous_detail", kwargs={"pk": self.pk})
+
+
+class deckBoss(models.Model):
+    card = models.ForeignKey(Boss, on_delete=models.CASCADE)
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = "deckBoss"
+        verbose_name_plural = "deckBoss"
+
+    def __str__(self):
+        return self.card
+
+    def get_absolute_url(self):
+        return reversed("deckBoss_detail", kwargs={"pk": self.pk})
