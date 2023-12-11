@@ -1,3 +1,4 @@
+from pyexpat import model
 from django.shortcuts import render
 
 # Create your views here.
@@ -122,7 +123,8 @@ def Test(request):
 @permission_classes((AllowAny,))
 def getRobinson(request):
     robinson_card = models.Robinson.objects.all()
-    robinsonSerializer = serializers.RobinsonSerializer(robinson_card, many=True)
+    robinsonSerializer = serializers.RobinsonSerializer(
+        robinson_card, many=True)
     data = robinsonSerializer.data
 
     return Response({"status": True, "data": data})
@@ -137,6 +139,7 @@ def getRobinson(request):
 @permission_classes((AllowAny,))
 def StartGame(request):
     user = User.objects.get(username=request.user.username)
+    game_id = 0
     try:
         if models.Game.objects.filter(user=user, status=False):
             status = False
@@ -153,18 +156,30 @@ def StartGame(request):
                     )
 
                 else:
-                    models.deckRobinson.objects.create(game=game, card=card_ran)
+                    models.deckRobinson.objects.create(
+                        game=game, card=card_ran)
 
             for boss in random.choices(card_boss, k=2):
                 models.deckBoss.objects.create(game=game, card=boss)
 
+            game_id = game.id
             status = True
 
     except Exception as e:
         print(e)
         status = "01"
 
-    return Response({"status": status})
+    return Response(
+        {
+            "status": status,
+            "game_id": game_id,
+            "data": {
+                "game": "",
+                "boss": "",
+                "deck": ""
+            }
+        }
+    )
 
 
 @csrf_exempt
@@ -183,3 +198,35 @@ def DeleteGame(request):
         status = False
 
     return Response({"status": status})
+
+
+@csrf_exempt
+@api_view(["POST"])
+@permission_classes((AllowAny,))
+def GameData(request):
+    game_id = models.Game.objects.filter(id=int(request.data["id"]))
+    gameSerializer = serializers.GameSerializer(game_id, many=True)
+    game_data = gameSerializer.data
+
+    boss_id = models.deckBoss.objects.filter(
+        game=models.Game.objects.get(id=int(request.data["id"])))
+    bossSerializer = serializers.deckBossSerializer(boss_id, many=True)
+    boss_data = bossSerializer.data
+    boss_list = []
+    for boss in boss_data:
+        boss = dict(boss)
+        boss["card"] = serializers.BossSerializer(
+            models.Boss.objects.filter(id=int(boss["card"])), many=True).data
+        boss_list.append(boss)
+    status = True
+
+    return Response(
+        {
+            "status": status,
+            "data": {
+                "game": game_data,
+                "boss": boss_list,
+                "deck": sum([int(i.value) for i in models.deckRobinson.objects.all()]),
+            }
+        }
+    )

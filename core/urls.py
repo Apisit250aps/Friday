@@ -23,4 +23,5 @@ urlpatterns = [
     path('' , include('app.urls')),
     path('api/' , include('card.urls')),
     
+    
 ]
