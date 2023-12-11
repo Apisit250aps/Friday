@@ -1,0 +1,220 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Friday</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+    <main id="app">
+        <section class="d-flex flex-column align-items-center justify-content-start">
+            <img src="./FRIDAY.png" alt="" class=" img-fluid">
+            <div id="carouselExampleIndicators" class="carousel slide" style="width: 50rem;">
+                <!-- <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0"
+                        class="active" aria-current="true" aria-label="Slide 1"></button>
+                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"
+                        aria-label="Slide 2"></button>
+                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"
+                        aria-label="Slide 3"></button>
+                </div> -->
+                <div class="carousel-inner p-3 rounded-3">
+                    <div class="carousel-item active">
+                        <form action="" class="f-form" id="login-form">
+                            <h1>Login</h1>
+                            <hr>
+                            <div class="form-floating mb-3">
+                                <input type="email" class="form-control" id="login-username"
+                                    placeholder="name@example.com" v-model="form_login.username">
+                                <label for="login-username">Username</label>
+                            </div>
+                            <div class="form-floating">
+                                <input type="password" class="form-control" id="login-password" placeholder="Password"
+                                    v-model="form_login.password">
+                                <label for="login-password">Password</label>
+                            </div>
+                            <button type="button" class="f-btn primary-outline-btn mt-3"
+                                @click="onLogin($event)">login</button>
+                            <!-- <p class="text-center justify-content-center align-content-center fw-bold">or</p> -->
+                            <hr>
+                            <button type="button" class="f-btn primary-btn mb-4"
+                                data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2">
+                                register
+                            </button>
+                        </form>
+                    </div>
+                    <div class="carousel-item">
+                        <form action="" class="f-form" id="register-form">
+                            <h1>Register</h1>
+                            <hr>
+                            <div class="form-floating mb-3">
+                                <input type="email" class="form-control" id="regis-username"
+                                    placeholder="name@example.com">
+                                <label for="regis-username">Username</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="password" class="form-control" id="regis-password" placeholder="Password">
+                                <label for="regis-password">Password</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="password" class="form-control" id="regis-confirm" placeholder="Password">
+                                <label for="regis-confirm">Confirm</label>
+                            </div>
+                            <!-- <button type="button" class="f-btn primary-outline-btn mt-3">login</button> -->
+                            <!-- <hr> -->
+                            <button type="button" class="f-btn primary-btn mb-3">
+                                register
+                            </button>
+                            <a href="" class="f-link" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0"
+                                class="active" aria-current="true" aria-label="Slide 1">Back to login!</a>
+                        </form>
+                    </div>
+                </div>
+                <!-- <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
+                    data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
+                    data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button> -->
+            </div>
+        </section>
+    </main>
+    <!--  -->
+    <script>
+        const { createApp, ref } = Vue;
+
+        const app = createApp(
+            {
+                data() {
+                    return {
+                        form_login: {
+                            username: "",
+                            password: "",
+
+                            username_isValid: true,
+                            password_isValid: true,
+
+                            isValid: true
+                        },
+                        form_register: {
+                            username: "",
+                            password: "",
+
+                            username_isValid: true,
+                            password_isValid: true,
+
+                            isValid: true
+                        }
+                    };
+                },
+                mounted() {
+                    console.log("hello");
+                },
+                methods: {
+                    onLogin(e) {
+                        e.preventDefault();
+                        this.form_login.isValid = true;
+
+                        this.form_login.username_isValid = true;
+                        if (this.form_login.username == "") {
+                            this.form_login.username_isValid = false;
+                            this.form_login.isValid = false;
+                        }
+                        this.form_login.password_isValid = true;
+                        if (this.form_login.password == "") {
+                            this.form_login.password_isValid = false;
+                            this.form_login.isValid = false;
+                        }
+
+                        if (this.form_login.isValid) {
+                            const form_data = new FormData;
+                            // form_data.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+                            form_data.append('username', this.form_login.username);
+                            form_data.append('password', this.form_login.password);
+
+                            axios(
+                                {
+                                    method: "post",
+                                    url: "https://poetic-presently-deer.ngrok-free.app/api/login",
+                                    data: form_data,
+                                    headers: {
+                                        "Access-Control-Allow-Origin": "*"
+                                    }
+
+                                }
+                            ).then((response) => {
+                                if (response.data['status']) {
+                                    location.reload();
+                                }
+                                else {
+                                    alert();
+                                }
+                            });
+                        }
+                    },
+                    onRegister(e) {
+                        e.preventDefault();
+                        this.form_register.isValid = true;
+
+                        this.form_register.username_isValid = true;
+                        if (this.form_register.username == "") {
+                            this.form_register.username_isValid = false;
+                            this.form_register.isValid = false;
+                        }
+
+                        this.form_register.password_isValid = true;
+                        if (this.form_register.password == "") {
+                            this.form_register.password_isValid = false;
+                            this.form_register.isValid = false;
+                        }
+
+                        if (this.form_register.isValid) {
+                            const form_data = new FormData;
+                            form_data.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+                            form_data.append('username');
+                            form_data.append('password');
+                            axios(
+                                {
+                                    method: "post",
+                                    url: "",
+                                    data: form_data,
+                                }
+                            ).then((response) => {
+                                if (response.data['status']) {
+                                    location.reload();
+                                }
+                                else {
+                                    alert();
+                                }
+                            });
+                        }
+                    }
+                },
+            }
+        );
+        app.mount("#app");
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+        integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
