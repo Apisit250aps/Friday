@@ -34,16 +34,6 @@ class graveRobinsonAdmin(admin.ModelAdmin):
     list_display = ["card", "value", "game"]
 
 
-@admin.register(deckDangerous)
-class deckDangerousAdmin(admin.ModelAdmin):
-    list_display = ["card", "value", "game"]
-
-
-@admin.register(graveDangerous)
-class graveDangerousAdmin(admin.ModelAdmin):
-    list_display = ["card", "value", "game"]
-
-
 @admin.register(deckBoss)
 class deckBossAdmin(admin.ModelAdmin):
     list_display = ["card", "game"]

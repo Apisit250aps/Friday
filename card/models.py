@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 
 ACTIVES = (
     # robinson
+    (0, "none"),
     (1, "health + 1"),
     (2, "health + 2"),
     (3, "card + 1"),
@@ -122,39 +123,6 @@ class graveRobinson(models.Model):
 
     def get_absolute_url(self):
         return reversed("graveRobinson_detail", kwargs={"pk": self.pk})
-
-
-class deckDangerous(models.Model):
-    card = models.ForeignKey(Dangerous, on_delete=models.CASCADE)
-    value = models.IntegerField()
-    game = models.ForeignKey(Game, on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name = "deckDangerous"
-        verbose_name_plural = "deckDangerous"
-
-    def __str__(self):
-        return self.card
-
-    def get_absolute_url(self):
-        return reversed("deckDangerous_detail", kwargs={"pk": self.pk})
-
-
-class graveDangerous(models.Model):
-    card = models.ForeignKey(Dangerous, on_delete=models.CASCADE)
-    value = models.IntegerField()
-    game = models.ForeignKey(Game, on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name = "graveDangerous"
-        verbose_name_plural = "graveDangerous"
-
-    def __str__(self):
-        return self.card
-
-    def get_absolute_url(self):
-        return reversed("graveDangerous_detail", kwargs={"pk": self.pk})
-
 
 class deckBoss(models.Model):
     card = models.ForeignKey(Boss, on_delete=models.CASCADE)
