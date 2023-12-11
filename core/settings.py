@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-($_j$0ba#fj@02-#2c!^$p$a!g)2gjajb!!9nlw)vyt)37$mfo"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ["a842-202-29-57-252.ngrok-free.app", "127.0.0.1"]
+ALLOWED_HOSTS = ["poetic-presently-deer.ngrok-free.app", "127.0.0.1"]
 
 
 # Application definition
@@ -140,6 +140,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = "static/"
+STATICFILES_DIRS = [Path.joinpath(BASE_DIR, "static")]
+STATIC_ROOT = Path.joinpath(BASE_DIR, "staticfiles_build")
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

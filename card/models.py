@@ -27,16 +27,10 @@ ACTIVES = (
 )
 
 ACTIVES_BOSS = (
-    (1, "health + 1"),
-    (2, "health + 2"),
-    (3, "card + 1"),
-    (4, "card + 2"),
-    (5, "destroy"),
-    (6, "double"),
-    (7, "copy"),
-    (8, "phase"),
-    (9, "sort"),
-    (10, "swap 1"),
+    (1, "+ 2 per age card"),
+    (2, "use 2 life per draw"),
+    (3, "+ 1 power on robinson card"),
+    (4, "use half robinson card"),
 )
 
 ABILITY_TYPE = ((1, "Normal"), (2, "Age"), (3, "Skill"))

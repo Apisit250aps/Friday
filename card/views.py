@@ -22,7 +22,8 @@ from django.views.decorators.http import require_POST
 import random
 
 from . import models
-# from . import serializers
+
+from . import serializers
 
 # Create your views here.
 
@@ -64,7 +65,7 @@ def userLogin(request):
 @permission_classes((AllowAny, IsAuthenticated))
 def userLogout(request):
     logout(request)
-    return redirect("index")
+    return Response({"status" : True})
 
 
 @csrf_exempt
@@ -75,13 +76,12 @@ def userLogout(request):
 )
 @permission_classes((AllowAny,))
 def userRegister(request):
-    email = request.data["email"]
     username = request.data["username"]
     password = request.data["password"]
 
     try:
         user = User.objects.create_user(
-            email=email, username=username, password=password
+            username=username, password=password
         )
 
         if user:
@@ -112,3 +112,19 @@ def userRegister(request):
 @permission_classes((AllowAny,))
 def Test(request):
     return Response({"status": "หมา", "message": "หิว"})
+
+
+# General API Shop
+@csrf_exempt
+@api_view(
+    [
+        "GET",
+    ]
+)
+@permission_classes((AllowAny,))
+def getRobinson(request):
+    robinson_card = models.Robinson.objects.all()
+    robinsonSerializer = serializers.RobinsonSerializer(robinson_card, many=True)
+    data = robinsonSerializer.data
+
+    return Response({"status": True, "data": data})
