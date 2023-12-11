@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "card",
     "rest_framework",
     "corsheaders",
+    "django_dump_load_utf8",
 ]
 
 REST_FRAMEWORK = {
