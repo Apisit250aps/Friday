@@ -91,6 +91,19 @@ section {
     color: var(--light);
 }
 
+.secondary-outline-btn {
+    border: solid 2px var(--light);
+    background-color: var(--light);
+    color: var(--primary);
+}
+
+.secondary-outline-btn:hover {
+    background-color: var(--secondary);
+    background-repeat: repeat;
+    background-size: 50% 100%;
+    color: var(--primary);
+}
+
 .f-link {
     color: var(--primary);
     font-weight: bold;

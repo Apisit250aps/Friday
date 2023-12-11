@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-($_j$0ba#fj@02-#2c!^$p$a!g)2gjajb!!9nlw)vyt)37$mfo
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["poetic-presently-deer.ngrok-free.app", "127.0.0.1"]
+ALLOWED_HOSTS = ["satyr-enhanced-tapir.ngrok-free.app", "127.0.0.1"]
 
 
 # Application definition
@@ -97,9 +97,9 @@ WSGI_APPLICATION = "core.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "Friday",
+        "NAME": "friday",
         "USER": "postgres",
-        "PASSWORD": "FH8REsNjydWsWu",
+        "PASSWORD": "apisit250",
         "HOST": "127.0.0.1",
         "PORT": "5432",
     }
