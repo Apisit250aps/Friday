@@ -21,7 +21,7 @@ class BossAdmin(admin.ModelAdmin):
 
 @admin.register(Game)
 class GameAdmin(admin.ModelAdmin):
-    list_display = ["life_point", "user"]
+    list_display = ["life_point", "user", "start"]
 
 
 @admin.register(deckRobinson)

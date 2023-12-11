@@ -23,4 +23,5 @@ urlpatterns = [
     path("test", views.Test),
     path("logout", views.userLogout),
     path("robinson", views.getRobinson),
+    path("table", views.StartGame),
 ]

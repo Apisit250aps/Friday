@@ -16,7 +16,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.staticfiles import finders
-from django.db.models import Q
+from django.db.models import Q, F
 from django.views.decorators.http import require_POST
 
 import random
@@ -65,7 +65,7 @@ def userLogin(request):
 @permission_classes((AllowAny, IsAuthenticated))
 def userLogout(request):
     logout(request)
-    return Response({"status" : True})
+    return Response({"status": True})
 
 
 @csrf_exempt
@@ -80,9 +80,7 @@ def userRegister(request):
     password = request.data["password"]
 
     try:
-        user = User.objects.create_user(
-            username=username, password=password
-        )
+        user = User.objects.create_user(username=username, password=password)
 
         if user:
             status = True
@@ -128,3 +126,60 @@ def getRobinson(request):
     data = robinsonSerializer.data
 
     return Response({"status": True, "data": data})
+
+
+@csrf_exempt
+@api_view(
+    [
+        "GET",
+    ]
+)
+@permission_classes((AllowAny,))
+def StartGame(request):
+    user = User.objects.get(username=request.user.username)
+    try:
+        if models.Game.objects.filter(user=user, status=False):
+            status = False
+        else:
+            game = models.Game.objects.create(user=user)
+            card = models.Robinson.objects.filter(type=1)
+            card_boss = models.Boss.objects.all()
+            print(card)
+            for i in range(18):
+                card_ran = random.choice(card)
+                if models.deckRobinson.objects.filter(game=game, card=card_ran):
+                    models.deckRobinson.objects.filter(game=game, card=card_ran).update(
+                        value=F("value") + 1
+                    )
+
+                else:
+                    models.deckRobinson.objects.create(game=game, card=card_ran)
+
+            for boss in random.choices(card_boss, k=2):
+                models.deckBoss.objects.create(game=game, card=boss)
+
+            status = True
+
+    except Exception as e:
+        print(e)
+        status = "01"
+
+    return Response({"status": status})
+
+
+@csrf_exempt
+@api_view(
+    [
+        "GET",
+    ]
+)
+@permission_classes((AllowAny,))
+def DeleteGame(request):
+    try:
+        user = User.objects.get(username=request.user.username)
+        models.Game.objects.filter(user=user, status=False).delete()
+        status = True
+    except:
+        status = False
+
+    return Response({"status": status})

@@ -50,6 +50,9 @@ class Robinson(models.Model):
     spend = models.IntegerField(choices=((1, "1"), (2, "2")))
     type = models.IntegerField(choices=ABILITY_TYPE)
 
+    def __str__(self) -> str:
+        return self.name
+
 
 class Dangerous(models.Model):
     name = models.CharField(max_length=255)
@@ -86,10 +89,13 @@ class Game(models.Model):
     score = models.IntegerField(default=0)
     round = models.IntegerField(default=0)
 
+    def __str__(self):
+        return self.user.username
+
 
 class deckRobinson(models.Model):
     card = models.ForeignKey(Robinson, on_delete=models.CASCADE)
-    value = models.IntegerField()
+    value = models.IntegerField(default=1)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
 
     class Meta:
@@ -97,7 +103,7 @@ class deckRobinson(models.Model):
         verbose_name_plural = "Decks"
 
     def __str__(self):
-        return self.card
+        return self.card.name
 
     def get_absolute_url(self):
         return reversed("Deck_detail", kwargs={"pk": self.pk})
@@ -128,7 +134,7 @@ class deckBoss(models.Model):
         verbose_name_plural = "deckBoss"
 
     def __str__(self):
-        return self.card
+        return self.card.name
 
     def get_absolute_url(self):
         return reversed("deckBoss_detail", kwargs={"pk": self.pk})
