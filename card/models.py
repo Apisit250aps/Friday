@@ -27,6 +27,7 @@ ACTIVES = (
 )
 
 ACTIVES_BOSS = (
+    (0, "none"),
     (1, "+ 2 per age card"),
     (2, "use 2 life per draw"),
     (3, "+ 1 power on robinson card"),
@@ -84,7 +85,6 @@ class Game(models.Model):
     end = models.DateTimeField(auto_now=True)
     score = models.IntegerField(default=0)
     round = models.IntegerField(default=0)
-    
 
 
 class deckRobinson(models.Model):
@@ -117,6 +117,7 @@ class graveRobinson(models.Model):
 
     def get_absolute_url(self):
         return reversed("graveRobinson_detail", kwargs={"pk": self.pk})
+
 
 class deckBoss(models.Model):
     card = models.ForeignKey(Boss, on_delete=models.CASCADE)
