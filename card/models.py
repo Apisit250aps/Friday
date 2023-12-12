@@ -59,6 +59,9 @@ class Dangerous(models.Model):
     pick = models.IntegerField()
     life_point = models.IntegerField(default=0)
 
+    def __str__(self):
+        return self.name
+
 
 class Boss(models.Model):
     name = models.CharField(max_length=255)

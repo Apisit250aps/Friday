@@ -1,3 +1,4 @@
+from heapq import merge
 from multiprocessing import Value
 from pyexpat import model
 from django.shortcuts import render
@@ -307,3 +308,26 @@ def pickCard(game):
                 id=draw.id, value=0).delete()
 
     return card_data
+
+
+def DangerousSkills():
+
+    list_enemies = []
+    ser_dan = serializers.DangerousSerializer(random.choices(
+        models.Dangerous.objects.all(), k=3), many=True).data
+    ser_skill = serializers.RobinsonSerializer(random.choices(
+        models.Robinson.objects.filter(type=3), k=3), many=True).data
+
+    for i in range(3):
+        list_enemies.append(
+            {
+                "danger": ser_dan[i],
+                "skill": ser_skill[i]
+            }
+        )
+
+    return Response(
+        {
+            "data": list_enemies,
+        }
+    )
