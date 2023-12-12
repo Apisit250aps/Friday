@@ -19,9 +19,8 @@ from . import views
 
 urlpatterns = [
     path("login", views.userLogin, name='login-api'),
-    path("register", views.userRegister),
-    path("test", views.Test),
-    path("logout", views.userLogout),
+    path("register", views.userRegister, name='register-api'),
+    path("logout", views.userLogout, name='logout-api'),
     path("robinson", views.getRobinson),
     path("table", views.StartGame, name='newgame-api'),
     path("data", views.GameData),

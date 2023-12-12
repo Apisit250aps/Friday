@@ -48,8 +48,22 @@
                         game: null
                     };
                 },
-                mounted(){
-                    console.log("hello")
+                mounted() {
+                    console.log("hello");
+                    axios(
+                        {
+                            method: "get",
+                            url: "{% url 'newgame-api' %}"
+                        }
+                    ).then((response) => {
+                        if (response.data['status']) {
+                            this.game = response.data['game_id'];
+                        }
+                        else {
+                            this.game = response.data['game_id'];
+                        }
+                        console.log(response.data);
+                    });
                 },
                 methods: {
                     onLogout() {
@@ -65,7 +79,7 @@
                         });
                     },
                     newGame() {
-                        console.log("click")
+                        console.log("click");
                         axios(
                             {
                                 method: "get",
@@ -78,7 +92,7 @@
                             else {
                                 this.game = response.data['game_id'];
                             }
-                            console.log(response.data)
+                            console.log(response.data);
                         });
                     }
                 }
