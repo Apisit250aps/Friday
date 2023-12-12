@@ -20,9 +20,9 @@ from . import views
 urlpatterns = [
     path("login", views.userLogin),
     path("register", views.userRegister),
-    path("test", views.Test),
     path("logout", views.userLogout),
     path("robinson", views.getRobinson),
     path("table", views.StartGame),
     path("data", views.GameData),
+    path("draw", views.Draw),
 ]
