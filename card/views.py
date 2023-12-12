@@ -1,3 +1,4 @@
+from multiprocessing import Value
 from pyexpat import model
 from django.shortcuts import render
 
@@ -27,6 +28,8 @@ from . import models
 from . import serializers
 
 # Create your views here.
+
+# user
 
 
 @csrf_exempt
@@ -99,21 +102,6 @@ def userRegister(request):
     return Response({"status": status, "message": message})
 
 
-# Customers
-
-
-@csrf_exempt
-@api_view(
-    [
-        "GET",
-    ]
-)
-@permission_classes((AllowAny,))
-def Test(request):
-    return Response({"status": "หมา", "message": "หิว"})
-
-
-# General API Shop
 @csrf_exempt
 @api_view(
     [
@@ -130,6 +118,7 @@ def getRobinson(request):
     return Response({"status": True, "data": data})
 
 
+# Start game
 @csrf_exempt
 @api_view(
     [
@@ -143,6 +132,7 @@ def StartGame(request):
     try:
         if models.Game.objects.filter(user=user, status=False):
             status = False
+            game_id = models.Game.objects.filter(user=user, status=False)[0].id
         else:
             game = models.Game.objects.create(user=user)
             card = models.Robinson.objects.filter(type=1)
@@ -173,11 +163,6 @@ def StartGame(request):
         {
             "status": status,
             "game_id": game_id,
-            "data": {
-                "game": "",
-                "boss": "",
-                "deck": ""
-            }
         }
     )
 
@@ -200,8 +185,14 @@ def DeleteGame(request):
     return Response({"status": status})
 
 
+# On game
+
 @csrf_exempt
-@api_view(["POST"])
+@api_view(
+    [
+        "POST",
+    ]
+)
 @permission_classes((AllowAny,))
 def GameData(request):
     game_id = models.Game.objects.filter(id=int(request.data["id"]))
@@ -209,7 +200,8 @@ def GameData(request):
     game_data = gameSerializer.data
 
     boss_id = models.deckBoss.objects.filter(
-        game=models.Game.objects.get(id=int(request.data["id"])))
+        game=models.Game.objects.get(id=int(request.data["id"]))
+    )
     bossSerializer = serializers.deckBossSerializer(boss_id, many=True)
     boss_data = bossSerializer.data
     boss_list = []
@@ -226,7 +218,34 @@ def GameData(request):
             "data": {
                 "game": game_data,
                 "boss": boss_list,
-                "deck": sum([int(i.value) for i in models.deckRobinson.objects.all()]),
+                "deck": sum([int(i.value) for i in models.deckRobinson.objects.filter(game=game_id)]),
             }
+        }
+    )
+
+
+@csrf_exempt
+@api_view(
+    [
+        "POST",
+    ]
+)
+@permission_classes((AllowAny,))
+def Draw(request):
+    user = User.objects.get(username=request.user.username)
+    game = models.Game.objects.filter(user=user)
+
+    game = models.Game.objects.get(id=id)
+    draw = random.choice(models.deckRobinson.objects.filter(game=game))
+    if models.deckRobinson.objects.filter(game=game, card=draw):
+        models.deckRobinson.objects.filter(game=game, card=draw).update(
+            value=F("value") - 1
+        )
+
+    return Response(
+        {
+
+            "deck": sum([int(i.value) for i in models.deckRobinson.objects.filter(game=game)]),
+
         }
     )
