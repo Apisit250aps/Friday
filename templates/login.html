@@ -42,7 +42,7 @@
                                     v-model="form_login.password">
                                 <label for="login-password">Password</label>
                             </div>
-                            <button type="button" class="f-btn primary-outline-btn mt-3"
+                            <button type="submit" class="f-btn primary-outline-btn mt-3"
                                 @click="onLogin($event)">login</button>
                             <!-- <p class="text-center justify-content-center align-content-center fw-bold">or</p> -->
                             <hr>
@@ -157,10 +157,10 @@
                                 }
                             ).then((response) => {
                                 if (response.data['status']) {
-                                    location.reload();
+                                    location.replace('{% url "index-page" %}');
                                 }
                                 else {
-                                    alert();
+                                    alert("error");
                                 }
                             });
                         }

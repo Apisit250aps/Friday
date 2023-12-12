@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     "django_dump_load_utf8",
 ]
 
+LOGIN_URL = '/auth/login'
+
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.

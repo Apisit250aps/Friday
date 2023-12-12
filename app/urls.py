@@ -20,5 +20,5 @@ from app import views
 
 urlpatterns = [
     path('', views.pageIndex, name='index-page'),
-    path('login', views.pageLogin, name='login-page'),
+    path('auth/login', views.pageLogin, name='login-page'),
 ]

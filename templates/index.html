@@ -20,17 +20,17 @@
             <img src="{% static 'img/FRIDAY.png' %}" alt="" class=" img-fluid">
 
             <div class="" style="width: 50rem;">
-                <button type="button" class="f-btn secondary-outline-btn mb-4" data-bs-target="#carouselExampleIndicators"
-                    data-bs-slide-to="1" aria-label="Slide 2">
+                <button type="button" class="f-btn secondary-outline-btn mb-4" @click="newGame()"
+                    data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2">
                     new game
                 </button>
-                <button type="button" class="f-btn secondary-outline-btn mb-4" data-bs-target="#carouselExampleIndicators"
-                    data-bs-slide-to="1" aria-label="Slide 2">
+                <button type="button" class="f-btn secondary-outline-btn mb-4"
+                    data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2">
                     continue
                 </button>
                 <hr class="bg-light border-1 border-light mb-4">
-                <button type="button" class="f-btn secondary-outline-btn mb-4" data-bs-target="#carouselExampleIndicators"
-                    data-bs-slide-to="1" aria-label="Slide 2">
+                <button type="button" class="f-btn secondary-outline-btn mb-4" @click="onLogout()"
+                    data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2">
                     logout
                 </button>
             </div>
@@ -38,6 +38,53 @@
     </main>
     <script>
         const { createApp, ref } = Vue;
+
+
+        const app = createApp(
+            {
+                delimiters: ["[{", "}]"],
+                data() {
+                    return {
+                        game: null
+                    };
+                },
+                mounted(){
+                    console.log("hello")
+                },
+                methods: {
+                    onLogout() {
+                        axios(
+                            {
+                                method: "get",
+                                url: "{% url 'logout-api' %}"
+                            }
+                        ).then((response) => {
+                            if (response.data['status']) {
+                                location.reload();
+                            }
+                        });
+                    },
+                    newGame() {
+                        console.log("click")
+                        axios(
+                            {
+                                method: "get",
+                                url: "{% url 'newgame-api' %}"
+                            }
+                        ).then((response) => {
+                            if (response.data['status']) {
+                                this.game = response.data['game_id'];
+                            }
+                            else {
+                                this.game = response.data['game_id'];
+                            }
+                            console.log(response.data)
+                        });
+                    }
+                }
+            }
+        );
+        app.mount('#app')
     </script>
 </body>
 
