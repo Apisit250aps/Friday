@@ -51,7 +51,7 @@ class Robinson(models.Model):
     type = models.IntegerField(choices=ABILITY_TYPE)
 
     def __str__(self) -> str:
-        return self.name
+        return self.name + " " + str(self.type)
 
 
 class Dangerous(models.Model):
@@ -111,7 +111,7 @@ class deckRobinson(models.Model):
 
 class graveRobinson(models.Model):
     card = models.ForeignKey(Robinson, on_delete=models.CASCADE)
-    value = models.IntegerField()
+    value = models.IntegerField(default=1)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
 
     class Meta:
@@ -119,7 +119,7 @@ class graveRobinson(models.Model):
         verbose_name_plural = "graveRobinson"
 
     def __str__(self):
-        return self.card
+        return self.card.name
 
     def get_absolute_url(self):
         return reversed("graveRobinson_detail", kwargs={"pk": self.pk})

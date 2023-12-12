@@ -138,7 +138,7 @@ def StartGame(request):
             card = models.Robinson.objects.filter(type=1)
             card_boss = models.Boss.objects.all()
             print(card)
-            for i in range(18):
+            for i in range(2):
                 card_ran = random.choice(card)
                 if models.deckRobinson.objects.filter(game=game, card=card_ran):
                     models.deckRobinson.objects.filter(game=game, card=card_ran).update(
@@ -218,7 +218,7 @@ def GameData(request):
             "data": {
                 "game": game_data,
                 "boss": boss_list,
-                "deck": sum([int(i.value) for i in models.deckRobinson.objects.filter(game=game_id)]),
+                "deck": sum([int(i.value) for i in models.deckRobinson.objects.filter(game=game_id[0].id)]),
             }
         }
     )
@@ -232,20 +232,78 @@ def GameData(request):
 )
 @permission_classes((AllowAny,))
 def Draw(request):
-    user = User.objects.get(username=request.user.username)
-    game = models.Game.objects.filter(user=user)
-
+    # user = User.objects.get(username=request.user.username)
+    id = request.data["id"]
     game = models.Game.objects.get(id=id)
-    draw = random.choice(models.deckRobinson.objects.filter(game=game))
-    if models.deckRobinson.objects.filter(game=game, card=draw):
-        models.deckRobinson.objects.filter(game=game, card=draw).update(
-            value=F("value") - 1
+    if models.deckRobinson.objects.filter(game=game).count() > 0:
+
+        card = pickCard(game)
+        card_data = card
+        sum_card = sum(
+            [
+                int(i.value)for i in models.deckRobinson.objects.filter(game=game)
+            ]
         )
+
+    else:
+        models.Game.objects.filter(id=id).update(
+            age=F("age") + 1
+        )
+        deck_grave = models.graveRobinson.objects.filter(game=game)
+        for grave in deck_grave:
+            card = models.Robinson.objects.get(id=int(grave.card.id))
+            value = int(grave.value)
+            models.deckRobinson.objects.create(
+                game=game, card=card, value=value)
+            models.graveRobinson.objects.filter(id=grave.id).delete()
+
+        models.deckRobinson.objects.create(
+            game=game,
+            card=random.choice(
+                models.Robinson.objects.filter(type=2)
+            )
+        )
+
+        card = pickCard(game)
+        sum_card = sum(
+            [
+                int(i.value)for i in models.deckRobinson.objects.filter(game=game)
+            ]
+        )
+        card_data = card
 
     return Response(
         {
-
-            "deck": sum([int(i.value) for i in models.deckRobinson.objects.filter(game=game)]),
-
+            "card": card_data,
+            "deck": sum_card,
         }
     )
+
+
+def pickCard(game):
+
+    draw = random.choice(models.deckRobinson.objects.filter(game=game))
+    card = models.Robinson.objects.get(id=int(draw.card.id))
+    card_data = serializers.RobinsonSerializer(card).data
+
+    if models.deckRobinson.objects.get(id=draw.id):
+        models.deckRobinson.objects.filter(id=draw.id).update(
+            value=F("value") - 1
+        )
+
+        card_ran = card
+
+        if models.graveRobinson.objects.filter(game=game, card=card_ran):
+            models.graveRobinson.objects.filter(game=game, card=card_ran).update(
+                value=F("value") + 1
+            )
+
+        else:
+            models.graveRobinson.objects.create(
+                game=game, card=card_ran)
+
+        if models.deckRobinson.objects.filter(id=draw.id, value=0):
+            models.deckRobinson.objects.filter(
+                id=draw.id, value=0).delete()
+
+    return card_data

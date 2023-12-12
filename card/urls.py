@@ -25,4 +25,5 @@ urlpatterns = [
     path("table", views.StartGame),
     path("data", views.GameData),
     path("draw", views.Draw),
+    path("endgame", views.DeleteGame),
 ]
