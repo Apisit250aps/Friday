@@ -38,6 +38,7 @@
         }
 
         #log {
+            background-color: var(--light);
             padding: 1rem;
         }
 
@@ -86,16 +87,16 @@
                 </table>
             </div>
             <button type="button" class="btn "
-                :class="{ 'btn-success':(game_data.game.level == 1),'btn-warning':(game_data.game.level == 2),'btn-danger':(game_data.game.level == 3) }"
+                :class="{ 'btn-success':(game_data.game.level == 1),'btn-warning':(game_data.game.level == 2),'btn-danger':(game_data.game.level == 3), 'disabled':finder==false }"
                 @click="randomDanger()">
-                DANGER RANDOM
+                DANGER RANDOM <span v-if="dangers!=null">[{dangers.length }]</span>
             </button>
         </div>
         <div class="col-6 d-flex flex-column text-white" id="log">
             <!--  -->
 
             <!-- Button trigger modal -->
-            <button type="button" id="danger-modal" class="btn btn-primary" data-bs-toggle="modal"
+            <button type="button" id="danger-modal-open" class="btn btn-primary" data-bs-toggle="modal"
                 data-bs-target="#exampleModal" hidden>
                 Launch demo modal
             </button>
@@ -107,16 +108,19 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button type="button" class="btn-close" id="danger-modal-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
                         </div>
                         <div class="modal-body row row-cols-3 m-auto gx-3">
                             <div class="card col" v-for="(item, index) in dangers" :key="index">
-                                <img src="https://via.placeholder.com/1024x768/eee?text=4:3" class="card-img-top" alt="...">
+                                <img src="https://via.placeholder.com/1024x768/eee?text=4:3" class="card-img-top"
+                                    alt="...">
                                 <div class="card-body">
                                     <h5 class="card-title">[{item.danger.name}]</h5>
                                     <p class="card-text">[{item.danger.life_point}]</p>
                                     <p class="card-text">[{item.danger.pick}]</p>
-                                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                                    <button type="button" @click="selectCard(index)" href="#" class="btn btn-primary">Go
+                                        somewhere</button>
                                 </div>
                             </div>
                         </div>
@@ -130,19 +134,75 @@
             <!--  -->
             <div id="danger" class="row row-cols-2 mx-auto rounded-4">
                 <div class="col bg-danger">
+                    <h1>Danger</h1>
+                    <table class="table" v-if="game_data!=null">
+                        <tr>
+                            <th>Name</th>
+                            <td>[{ quest.danger.name }]</td>
+                        </tr>
+                        <tr>
+                            <th>LP</th>
+                            <td>[{ quest.danger.life_point }]</td>
+                        </tr>
+                        <tr>
+                            <th>Pick</th>
+                            <td>[{ quest.danger.pick }]</td>
+                        </tr>
 
+                    </table>
                 </div>
                 <div class="col bg-success">
+                    <h1>Skill</h1>
+                    <table class="table" v-if="game_data!=null">
+                        <tr>
+                            <th>Name</th>
+                            <td>[{ quest.skill.name }]</td>
+                        </tr>
+                        <tr>
+                            <th>Power</th>
+                            <td>[{ quest.skill.power }]</td>
+                        </tr>
+                        <tr>
+                            <th>Spend</th>
+                            <td>[{ quest.skill.spend }]</td>
+                        </tr>
+
+                    </table>
 
                 </div>
 
             </div>
+            <hr>
+            <div class="p-2 mt-5">
+                <table class="table" >
+                    <thead>
+                        <th>name</th>
+                        <th>power</th>
+                        <th>active</th>
+                        <th>spend</th>
+                        
+                    </thead>
+                    <tbody>
+                        <tr v-for="(item, index) in fields" :key="index">
+                            <td>[{item.name}]</td>
+                            <td>[{item.power}]</td>
+                            <td>[{item.active}]</td>
+                            <td>[{item.spend}]</td>
+                           
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <div class="col-3 p-3" id="state">
+        <div class="col-3 p-3 d-flex flex-column justify-content-between" id="state">
             <table class="table" v-if="game_data!=null">
                 <tr>
                     <th>LP</th>
                     <td>[{ game_data.game.life_point }]</td>
+                </tr>
+                <tr>
+                    <th>Year</th>
+                    <td>[{ game_data.game.age }]</td>
                 </tr>
                 <tr>
                     <th>Level</th>
@@ -152,21 +212,24 @@
                     <th>Rounds</th>
                     <td>[{ game_data.game.round }]</td>
                 </tr>
+                <tr>
+                    <th>Deck</th>
+                    <td>[{ game_data.deck }]</td>
+                </tr>
             </table>
+            <button type="button" class="btn btn-outline-dark w-100" @click="draw()">Draw <span>[{pick_value
+                    }]</span></button>
         </div>
     </main>
     <script>
         const { createApp, ref } = Vue;
-
-
         const app = createApp(
             {
                 delimiters: ["[{", "}]"],
                 data() {
                     return {
-                        game: null,
+                        game: "{{id}}",
                         game_data: null,
-
                         quest: {
                             danger: {
                                 id: null,
@@ -183,7 +246,10 @@
                                 type: null
                             }
                         },
-                        dangers: null
+                        dangers: null,
+                        finder: true,
+                        pick_value: 0,
+                        fields: []
                     };
                 },
                 mounted() {
@@ -208,22 +274,60 @@
                     });
                 },
                 methods: {
+                    draw() {
+                        if (this.pick_value >= 1) {
+                            const form_data = new FormData;
+                            form_data.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+                            form_data.append('id', '{{id}}');
+                            axios(
+                                {
+                                    method: 'post',
+                                    url: "{% url 'draw-api' %}",
+                                    data: form_data
+                                }
+                            ).then((response) => {
+                                this.fields.push(response.data['card']);
+                                this.game_data.deck = response.data['deck']
+                            });
+                            this.pick_value -= 1
+                        }
+                        else {
+
+                        }
+                    },
+                    selectCard(id) {
+                        this.quest = this.dangers[id];
+                        setTimeout(() => {
+                            this.dangers = null;
+                            this.finder = false;
+                            this.pick_value = this.quest.danger.pick;
+                        }, 100);
+                        document.getElementById("danger-modal-close").click();
+                    },
                     randomDanger() {
-                        axios(
-                            {
-                                method: "get",
-                                url: "{% url 'danger-api' %}"
-                            }
-                        ).then((response) => {
-                            this.dangers = response.data['data'];
-                            document.getElementById("danger-modal").click();
-                        });
+                        if (this.dangers == null) {
+                            axios(
+                                {
+                                    method: "get",
+                                    url: "{% url 'danger-api' %}"
+                                }
+                            ).then((response) => {
+                                this.dangers = response.data['data'];
+                                setTimeout(() => {
+                                    document.getElementById("danger-modal-open").click();
+                                }, 100);
+                            });
+                        }
+                        setTimeout(() => {
+                            document.getElementById("danger-modal-open").click();
+                        }, 100);
                     }
                 }
             }
         );
         app.mount('#game')
     </script>
+    <!--  -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>

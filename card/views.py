@@ -139,7 +139,7 @@ def StartGame(request):
             card = models.Robinson.objects.filter(type=1)
             card_boss = models.Boss.objects.all()
             print(card)
-            for i in range(2):
+            for i in range(18):
                 card_ran = random.choice(card)
                 if models.deckRobinson.objects.filter(game=game, card=card_ran):
                     models.deckRobinson.objects.filter(game=game, card=card_ran).update(
