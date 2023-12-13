@@ -24,6 +24,11 @@ from django.views.decorators.http import require_POST
 
 import random
 
+from .models import (
+    ABILITY_TYPE,
+    ACTIVES_BOSS,
+    ACTIVES,
+)
 
 from . import models
 
@@ -209,9 +214,13 @@ def GameData(request):
     boss_list = []
     for boss in boss_data:
         boss = dict(boss)
-        boss["card"] = serializers.BossSerializer(
-            models.Boss.objects.get(id=int(boss["card"]))).data
+        boss_active = dict(serializers.BossSerializer(
+            models.Boss.objects.get(id=int(boss["card"]))).data)
+        boss_active['active'] = getModelChoice(
+            boss_active['active'], ACTIVES_BOSS)
+        boss["card"] = boss_active
         boss_list.append(boss)
+
     status = True
 
     return Response(
@@ -375,3 +384,9 @@ def Fights(request):
             "deck": sum([int(i.value) for i in models.deckRobinson.objects.filter(game=game)])
         }
     )
+
+
+def getModelChoice(num, choices):
+    for choice in choices:
+        if choice[0] == num:
+            return choice[1]
