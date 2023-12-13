@@ -23,8 +23,8 @@ urlpatterns = [
     path("logout", views.userLogout, name='logout-api'),
     path("robinson", views.getRobinson),
     path("table", views.StartGame, name='newgame-api'),
-    path("data", views.GameData),
+    path("data", views.GameData, name="game-data-api"),
     path("draw", views.Draw),
     path("endgame", views.DeleteGame),
-    path("danger", views.DangerousSkills),
+    path("danger", views.DangerousSkills, name="danger-api"),
 ]

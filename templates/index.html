@@ -24,7 +24,7 @@
                     data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2">
                     new game
                 </button>
-                <button type="button" class="f-btn secondary-outline-btn mb-4"
+                <button type="button" class="f-btn secondary-outline-btn mb-4" @click="contGame()"
                     data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2">
                     continue
                 </button>
@@ -94,6 +94,9 @@
                             }
                             console.log(response.data);
                         });
+                    },
+                    contGame(){
+                        location.replace(`game/${this.game}`)
                     }
                 }
             }

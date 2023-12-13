@@ -21,4 +21,5 @@ from app import views
 urlpatterns = [
     path('', views.pageIndex, name='index-page'),
     path('auth/login', views.pageLogin, name='login-page'),
+    path('game/<int:id>', views.pageGame, name='game-page'),
 ]

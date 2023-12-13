@@ -209,7 +209,7 @@ def GameData(request):
     for boss in boss_data:
         boss = dict(boss)
         boss["card"] = serializers.BossSerializer(
-            models.Boss.objects.filter(id=int(boss["card"])), many=True).data
+            models.Boss.objects.get(id=int(boss["card"]))).data
         boss_list.append(boss)
     status = True
 
@@ -217,7 +217,7 @@ def GameData(request):
         {
             "status": status,
             "data": {
-                "game": game_data,
+                "game": game_data[0],
                 "boss": boss_list,
                 "deck": sum([int(i.value) for i in models.deckRobinson.objects.filter(game=game_id[0].id)]),
             }
@@ -309,8 +309,14 @@ def pickCard(game):
 
     return card_data
 
-
-def DangerousSkills():
+@csrf_exempt
+@api_view(
+    [
+        "GET",
+    ]
+)
+@permission_classes((AllowAny,))
+def DangerousSkills(request):
 
     list_enemies = []
     ser_dan = serializers.DangerousSerializer(random.choices(
