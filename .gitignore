@@ -161,3 +161,7 @@ cython_debug/
 staticfiles_build/
 
 ngrok.txt
+core/settings_dev.py
+manage_dev.py
+.bat
+.bat/

@@ -1,0 +1,1 @@
+py manage_dev.py runserver

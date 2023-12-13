@@ -1,6 +1,7 @@
 from heapq import merge
 from multiprocessing import Value
 from pyexpat import model
+from turtle import mode
 from django.shortcuts import render
 
 # Create your views here.
@@ -286,8 +287,8 @@ def Draw(request):
 
     status = True
 
-    models.Game.objects.get(id=id).update(
-        life_point=F("life_point") - int(request.data("mode"))
+    models.Game.objects.filter(id=id).update(
+        life_point=F("life_point") - int(request.data["mode"])
 
     )
 
@@ -372,16 +373,20 @@ def DangerousSkills(request):
 def Fights(request):
     id = request.data["id"]
     game = models.Game.objects.get(id=id)
-
-    # if int(request.data["status"]) == 1:
-    #     models.graveRobinson.objects.create(
-    #         game=game, card=models.Robinson.objects.filter(id=int(request.data["card_id"])))
-    # else:
-    #     fight_result = 0
+    fight_status = int(request.data["status"])
+    skill_id = models.Robinson.objects.get(id=int(request.data["skill"]))
+    skill_data = serializers.RobinsonSerializer(skill_id).data
+    if int(request.data["status"]) == 1:
+        models.graveRobinson.objects.create(
+            game=game,
+            card=skill_id
+        )
 
     return Response(
         {
-            "deck": sum([int(i.value) for i in models.deckRobinson.objects.filter(game=game)])
+            "grave_deck": sum([int(i.value) for i in models.graveRobinson.objects.filter(game=game)]),
+            "status": fight_status,
+            "danger": skill_data,
         }
     )
 
