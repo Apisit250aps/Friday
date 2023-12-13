@@ -1,3 +1,4 @@
+import time
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -141,3 +142,12 @@ class deckBoss(models.Model):
 
     def get_absolute_url(self):
         return reversed("deckBoss_detail", kwargs={"pk": self.pk})
+
+
+class Score(models.Model):
+    name = models.ForeignKey(User, on_delete=models.CASCADE)
+    point = models.IntegerField(default=0)
+    time = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return self.name

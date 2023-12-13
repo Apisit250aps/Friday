@@ -297,6 +297,7 @@ def Draw(request):
 
     return Response(
         {
+            "life_point": models.Game.objects.get(id=id).life_point,
             "card": card_data,
             "deck": sum_card,
             "status": status,
@@ -395,3 +396,5 @@ def getModelChoice(num, choices):
     for choice in choices:
         if choice[0] == num:
             return choice[1]
+
+

@@ -37,3 +37,8 @@ class graveRobinsonAdmin(admin.ModelAdmin):
 @admin.register(deckBoss)
 class deckBossAdmin(admin.ModelAdmin):
     list_display = ["card", "game"]
+
+
+@admin.register(Score)
+class ScoreAdmin(admin.ModelAdmin):
+    list_display = ["id","name", "point","time"]
