@@ -16,4 +16,4 @@ def pageIndex(request):
 @login_required
 def pageGame(request, id):
     
-    return render(request, 'game.html', {"id":id})
+    return render(request, 'game.html', {"id":id, "user":request.user.username})
