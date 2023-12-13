@@ -30,7 +30,7 @@
         }
 
         body {
-            background-color:var(--primary);
+            background-color: var(--primary);
             height: 100%;
         }
 
@@ -68,11 +68,96 @@
             height: 50dvh;
             overflow-y: auto;
         }
+
+        #action-btn {
+            background-color: var(--primary);
+            box-shadow: 0 -0.25rem 1rem var(--dark);
+        }
+
+        .button-primary {
+            border: var(--primary) 1px solid;
+            background-color: var(--primary);
+            color: var(--light);
+        }
+
+        .button-primary:hover {
+            background-color: var(--light);
+            color: var(--primary);
+        }
     </style>
 </head>
 
-<body>
-    <main id="app" class="container pt-3 px-lg-5">
+<body class="vh-100">
+    <main id="app" class="container pt-3 px-lg-5 h-100">
+        <!--  -->
+        <!-- Button trigger modal -->
+        <button type="button" id="open-modal-danger" class="btn btn-primary" data-bs-toggle="modal"
+            data-bs-target="#danger-modal" hidden>
+            Launch demo modal
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade modal-lg" id="danger-modal" tabindex="-1" aria-labelledby="danger-modalLabel"
+            aria-hidden="true" v-if="dangers!=null">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="danger-modalLabel">Modal title</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                            ref="danger-modal-close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="accordion " id="accordionExample">
+                            <div class="accordion-item" v-for="(item, index) in dangers" :key="index">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                        :data-bs-target="`#collapseOne${index}`" aria-expanded="true"
+                                        :aria-controls="`collapseOne${index}`">
+                                        [{item.danger.name}]
+                                    </button>
+                                </h2>
+                                <div :id="`collapseOne${index}`" class="accordion-collapse collapse p-3 "
+                                    data-bs-parent="#accordionExample">
+                                    <div class="accordion-body p-0">
+                                        <div class="p-0">
+                                            <b>info</b>
+                                            <hr>
+                                            <div class="row py-1 m-auto">
+                                                <div class="col-4">[{item.danger.name}]</div>
+                                                <div class="col-4">[{item.danger.life_point}]</div>
+                                                <div class="col-4">[{item.danger.pick}]</div>
+
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="p-0">
+                                            <b>skill</b>
+                                            <hr>
+                                            <div class="row py-1 m-auto">
+                                                <div class="col-4">[{item.skill.name}]</div>
+                                                <div class="col-4">[{item.skill.power}]</div>
+                                                <div class="col-4">[{item.skill.spend}]</div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <button type="button" class="btn btn-primary"
+                                        @click="selectCard(index)">accept</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+
+        <!--  -->
         <div id="game" class="row m-auto rounded-4 px-2 px-lg-3 pt-2" v-if="game_data!=null">
             <div class="col-6 col-lg-8">
                 <table class="table status-table table-sm table-light table-hover table-borderless rounded-4 ">
@@ -82,7 +167,7 @@
                     </tr>
                     <tr>
                         <th>HP</th>
-                        <td class="text-center text-lg-start">[{ game_data.game.life_point }]</td>
+                        <td class="text-center text-lg-start"><span v-show="game_data!=null">[{ hp }]</span></td>
                     </tr>
                     <tr>
                         <th>Year</th>
@@ -109,86 +194,71 @@
         </div>
         <!--  -->
         <hr>
-        <section class="container rounded-4 py-2 mb-3" id="dangerous">
+        <section class=" rounded-4 py-2 mb-3" id="dangerous">
             <div class="row m-auto py-2">
-                <div class="col-4">Danger</div>
-                <div class="col-4">HP:20</div>
-                <div class="col-4 justify-content-end align-items-center d-flex flex-row">
+                <div class="col-3">[{quest.danger.name}]</div>
+                <div class="col-3">HP: [{quest.danger.life_point}] <span v-show="user_power!=0"><span
+                            v-show="user_power>=0">-</span><span v-show="user_power<=0">+</span>[{user_power}]</span>
+                </div>
+                <div class="col-3">Pick: [{quest.danger.pick}]</div>
+                <div class="col-3 justify-content-end align-items-center d-flex flex-row">
                     <button class="btn btn-primary" type="button" data-bs-toggle="collapse"
                         data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-                        asd
+                        show
                     </button>
                 </div>
             </div>
             <div class="collapse " id="collapseExample">
-                <div class="card card-body">
-                    Some placeholder content for the collapse component. This panel is hidden by default but revealed
-                    when the user activates the relevant trigger.
+                <div class="card card-body text-black w-100">
+                    <b>skill</b>
+                    <hr>
+                    <div class="row py-1 m-auto">
+                        <div class="col-4">[{quest.skill.name}]</div>
+                        <div class="col-4">[{quest.skill.power}]</div>
+                        <div class="col-4">[{quest.skill.spend}]</div>
+
+                    </div>
                 </div>
             </div>
         </section>
 
         <!--  -->
-        <section id="battle-phase" class=" container rounded-4 py-3">
+        <section id="battle-phase" class="  rounded-4 py-3 px-3">
             <div class="skill">
-                <div class="accordion" id="accordionExample">
-                    <div class="accordion-item">
+                <div class="accordion " id="accordionExample">
+                    <div class="accordion-item" v-for="(item, index) in fields" :key="index">
                         <h2 class="accordion-header">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                Accordion Item #1
+                            <button class="accordion-button row row-cols-2 mx-auto g-0" type="button"
+                                data-bs-toggle="collapse" :data-bs-target="`#collapseOne${index}`" aria-expanded="true"
+                                :aria-controls="`collapseOne${index}`">
+                                <div class="col">[{item.name}]</div>
+                                <div class="col">
+                                    ( <b
+                                        :class="{'text-danger':item.power < 0, 'text-success':item.power > 0}">[{item.power}]</b>
+                                    )
+                                </div>
                             </button>
                         </h2>
-                        <div id="collapseOne" class="accordion-collapse collapse show"
+                        <div :id="`collapseOne${index}`" class="accordion-collapse collapse"
                             data-bs-parent="#accordionExample">
                             <div class="accordion-body">
                                 asd
                             </div>
                         </div>
                     </div>
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                Accordion Item #1
-                            </button>
-                        </h2>
-                        <div id="collapseOne" class="accordion-collapse collapse show"
-                            data-bs-parent="#accordionExample">
-                            <div class="accordion-body">
-                                asd
-                            </div>
-                        </div>
-                    </div>
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                Accordion Item #1
-                            </button>
-                        </h2>
-                        <div id="collapseOne" class="accordion-collapse collapse show"
-                            data-bs-parent="#accordionExample">
-                            <div class="accordion-body">
-                                asd
-                            </div>
-                        </div>
-                    </div>
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                Accordion Item #1
-                            </button>
-                        </h2>
-                        <div id="collapseOne" class="accordion-collapse collapse show"
-                            data-bs-parent="#accordionExample">
-                            <div class="accordion-body">
-                                asd
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
+            </div>
+        </section>
+        <!--  -->
+        <section id="action-btn" class="container fixed-bottom mt-5 py-3 rounded-top-4">
+            <div class="next w-100 d-flex flex-column justify-content-center align-items-center">
+                <button type="button" class="btn button-primary btn-lg w-50" @click="randomDanger()" v-show="finder">
+                    Next
+                </button>
+                <button type="button" class="btn button-primary btn-lg w-50" @click="draw()" v-show="!finder">
+                    Draw
+                </button>
             </div>
         </section>
     </main>
@@ -201,12 +271,14 @@
                     return {
                         game: "{{id}}",
                         game_data: null,
+                        mode: 0,
+
                         quest: {
                             danger: {
                                 id: null,
                                 name: null,
                                 pick: null,
-                                life_point: null
+                                life_point: 0
                             },
                             skill: {
                                 id: null,
@@ -220,8 +292,15 @@
                         dangers: null,
                         finder: true,
                         pick_value: 0,
-                        fields: []
+                        fields: [],
+                        user_power: 0,
+
                     };
+                },
+                computed: {
+                    hp() {
+                        return this.game_data.game.life_point - (this.quest.danger.life_point + this.user_power);
+                    }
                 },
                 mounted() {
                     console.log("hello");
@@ -250,6 +329,7 @@
                             const form_data = new FormData;
                             form_data.append('csrfmiddlewaretoken', '{{ csrf_token }}');
                             form_data.append('id', '{{id}}');
+                            form_data.append('mode', this.mode);
                             axios(
                                 {
                                     method: 'post',
@@ -258,6 +338,7 @@
                                 }
                             ).then((response) => {
                                 this.fields.push(response.data['card']);
+                                this.quest.danger.life_point -= response.data['card'].power;
                                 this.game_data.deck = response.data['deck'];
                             });
                             this.pick_value -= 1;
@@ -268,12 +349,13 @@
                     },
                     selectCard(id) {
                         this.quest = this.dangers[id];
+                        this.dangers = null;
+                        this.finder = false;
+                        this.pick_value = this.quest.danger.pick;
                         setTimeout(() => {
-                            this.dangers = null;
-                            this.finder = false;
-                            this.pick_value = this.quest.danger.pick;
+
                         }, 100);
-                        document.getElementById("danger-modal-close").click();
+                        this.$refs['danger-modal-close'].click();
                     },
                     randomDanger() {
                         if (this.dangers == null) {
@@ -283,14 +365,15 @@
                                     url: "{% url 'danger-api' %}"
                                 }
                             ).then((response) => {
+                                console.log(response.data['data']);
                                 this.dangers = response.data['data'];
                                 setTimeout(() => {
-                                    document.getElementById("danger-modal-open").click();
+                                    document.getElementById("open-modal-danger").click();
                                 }, 100);
                             });
                         }
                         setTimeout(() => {
-                            document.getElementById("danger-modal-open").click();
+                            document.getElementById("open-modal-danger").click();
                         }, 100);
                     }
                 }
