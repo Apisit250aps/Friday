@@ -24,6 +24,7 @@ from django.views.decorators.http import require_POST
 
 import random
 
+
 from . import models
 
 from . import serializers
@@ -236,6 +237,7 @@ def Draw(request):
     # user = User.objects.get(username=request.user.username)
     id = request.data["id"]
     game = models.Game.objects.get(id=id)
+
     if models.deckRobinson.objects.filter(game=game).count() > 0:
 
         card = pickCard(game)
@@ -273,10 +275,21 @@ def Draw(request):
         )
         card_data = card
 
+    status = True
+
+    models.Game.objects.get(id=id).update(
+        life_point=F("life_point") - int(request.data("mode"))
+
+    )
+
+    if int(models.Game.objects.get(id=id).life_point) < 0:
+        status = False
+
     return Response(
         {
             "card": card_data,
             "deck": sum_card,
+            "status": status,
         }
     )
 
@@ -309,6 +322,7 @@ def pickCard(game):
 
     return card_data
 
+
 @csrf_exempt
 @api_view(
     [
@@ -335,5 +349,29 @@ def DangerousSkills(request):
     return Response(
         {
             "data": list_enemies,
+        }
+    )
+
+
+@csrf_exempt
+@api_view(
+    [
+        "POST",
+    ]
+)
+@permission_classes((AllowAny,))
+def Fights(request):
+    id = request.data["id"]
+    game = models.Game.objects.get(id=id)
+
+    # if int(request.data["status"]) == 1:
+    #     models.graveRobinson.objects.create(
+    #         game=game, card=models.Robinson.objects.filter(id=int(request.data["card_id"])))
+    # else:
+    #     fight_result = 0
+
+    return Response(
+        {
+            "deck": sum([int(i.value) for i in models.deckRobinson.objects.filter(game=game)])
         }
     )
