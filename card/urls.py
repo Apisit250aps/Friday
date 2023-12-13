@@ -24,7 +24,7 @@ urlpatterns = [
     path("robinson", views.getRobinson),
     path("table", views.StartGame, name='newgame-api'),
     path("data", views.GameData, name="game-data-api"),
-    path("draw", views.Draw),
+    path("draw", views.Draw, name="draw-api"),
     path("endgame", views.DeleteGame),
     path("danger", views.DangerousSkills, name="danger-api"),
     path("fight", views.Fights, name="fight-api"),
