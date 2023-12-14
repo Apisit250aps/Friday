@@ -1,1 +1,1 @@
-py manage_dev.py runserver
+python manage_dev.py runserver

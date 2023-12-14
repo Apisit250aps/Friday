@@ -163,5 +163,6 @@ staticfiles_build/
 ngrok.txt
 core/settings_dev.py
 manage_dev.py
-.bat
-.bat/
+mig.bat
+env.bat
+run.bat
