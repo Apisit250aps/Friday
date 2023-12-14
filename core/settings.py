@@ -99,10 +99,10 @@ WSGI_APPLICATION = "core.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "friday",
+        "NAME": "postgres",
         "USER": "postgres",
-        "PASSWORD": "apisit250",
-        "HOST": "127.0.0.1",
+        "PASSWORD": "FH8REsNjydWsWu",
+        "HOST": "db.weayghfdapanebmbhruc.supabase.co",
         "PORT": "5432",
     }
 }
